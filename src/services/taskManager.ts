@@ -1,6 +1,12 @@
 import type { Task } from '../types';
 import { fetchTodoistTasks } from './todoist';
 
+// Helper to get dates relative to today
+const getRelativeDate = (daysOffset: number) => {
+  const d = new Date();
+  d.setDate(d.getDate() + daysOffset);
+  return d.toISOString();
+};
 
 let localTasks: Task[] = [
   {
@@ -8,6 +14,30 @@ let localTasks: Task[] = [
     title: 'Design UI mockup',
     status: 'in-progress',
     source: 'local',
+    colorCode: '#8b5cf6', // Purple hue for this task
+    nodes: [
+      {
+        id: 'node-1',
+        parentId: 'local-1',
+        date: getRelativeDate(0), // Today
+        isCompleted: true,
+        dailyNotes: 'Wireframes'
+      },
+      {
+        id: 'node-2',
+        parentId: 'local-1',
+        date: getRelativeDate(1), // Tomorrow
+        isCompleted: false,
+        dailyNotes: 'High fidelity mockups'
+      },
+      {
+        id: 'node-3',
+        parentId: 'local-1',
+        date: getRelativeDate(2), // Day after tomorrow
+        isCompleted: false,
+        dailyNotes: 'Prototyping & Feedback'
+      }
+    ]
   },
   {
     id: 'local-2',
@@ -19,7 +49,6 @@ let localTasks: Task[] = [
 
 export const getAllTasks = async (): Promise<Task[]> => {
   const todoistTasks = await fetchTodoistTasks();
-  // In a real app we might also fetch calendar events and map them to tasks if applicable.
   return [...localTasks, ...todoistTasks];
 };
 
